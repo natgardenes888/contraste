@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { ArrowRight, Search, X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { TopicCard } from "@/components/topic-card";
 import type { Topic } from "@/data/topics";
@@ -44,8 +43,6 @@ export function TopicExplorer({ topics, initialCategory = "Todos" }: { topics: T
   }, [category, query, topics]);
 
   const hasFilters = query.length > 0 || category !== "Todos";
-  const featuredResults = results.slice(0, 3);
-
   return (
     <div>
       <div className="sticky top-16 z-30 border-y border-ink/10 bg-paper/90 py-5 backdrop-blur-xl dark:border-white/10 dark:bg-[#11110f]/90">
@@ -103,21 +100,6 @@ export function TopicExplorer({ topics, initialCategory = "Todos" }: { topics: T
           </button>
         )}
       </div>
-
-      {featuredResults.length > 0 && (query || category !== "Todos") ? (
-        <div className="mb-6 grid gap-3 lg:grid-cols-3">
-          {featuredResults.map((topic) => (
-            <Link key={topic.slug} href={`/temas/${topic.slug}`} className="group rounded-lg border border-ink/10 bg-white/75 p-4 shadow-soft transition hover:-translate-y-0.5 hover:border-cobalt/30 dark:border-white/10 dark:bg-white/[0.04]">
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-cobalt dark:text-blue-200">Recomendado</p>
-              <h2 className="mt-2 text-lg font-semibold text-ink dark:text-white">{topic.title}</h2>
-              <p className="mt-2 line-clamp-2 text-sm leading-6 text-graphite dark:text-white/65">{topic.summary}</p>
-              <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-coral">
-                Abrir ficha <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
-              </span>
-            </Link>
-          ))}
-        </div>
-      ) : null}
 
       {results.length > 0 ? (
         <div className="topic-grid grid gap-4 md:grid-cols-2 xl:grid-cols-3">
