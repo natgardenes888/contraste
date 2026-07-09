@@ -33,16 +33,16 @@ export async function buildAcademicAnalysis(query: string, mode: AnalysisMode): 
     confidence: 48,
     evidenceQuality: "Baja",
     argumentsFor: [{
-      title: `Qué líneas de investigación podrían apoyar la afirmación sobre ${subject}`,
-      explanation: `La búsqueda encontró trabajos centrados en ${sourceNames.join(", ")}. Son puntos de entrada específicos, pero sus títulos y resúmenes no bastan para afirmar que todos apoyan la frase original. Hay que comprobar población, método, tamaño del efecto y dirección del resultado.`,
+      title: `Líneas de lectura relacionadas con ${subject}`,
+      explanation: `La búsqueda encontró trabajos como ${sourceNames.join(", ")}. Son puntos de entrada, no pruebas concluyentes a favor. Hay que abrir cada fuente y comprobar población, método, tamaño del efecto y dirección del resultado.`,
       evidence: "Baja"
     }],
     argumentsAgainst: [{
       title: mode === "devil"
         ? `La explicación rival debe encajar mejor con los estudios encontrados`
         : mode === "tiktok"
-          ? "El contenido omite contexto que las publicaciones sí distinguen"
-          : `La pregunta sobre ${subject} contiene más de una afirmación`,
+          ? "El contenido puede omitir contexto que las publicaciones sí distinguen"
+          : `La pregunta sobre ${subject} puede contener más de una afirmación`,
       explanation: buildChallenge(mode, query, papers),
       evidence: "Baja"
     }],
@@ -138,53 +138,9 @@ function unresolvedQuestions(mode: AnalysisMode, query: string) {
   return questions;
 }
 
-async function searchCrossref(query: string): Promise<SemanticPaper[]> {
-  const params = new URLSearchParams({
-    "query.bibliographic": cleanSearchQuery(query),
-    rows: "20",
-    select: "DOI,title,author,published,container-title,URL,type,is-referenced-by-count"
-  });
-  try {
-    const response = await fetch(`https://api.crossref.org/works?${params}`, {
-      headers: { "User-Agent": "CONTRASTE/0.1 (academic discovery)" },
-      next: { revalidate: 86400 }
-    });
-    if (!response.ok) return [];
-    const payload = await response.json() as {
-      message?: { items?: Array<{
-        DOI?: string;
-        title?: string[];
-        author?: Array<{ given?: string; family?: string }>;
-        published?: { "date-parts"?: number[][] };
-        "container-title"?: string[];
-        URL?: string;
-        type?: string;
-        "is-referenced-by-count"?: number;
-      }> };
-    };
-    const papers = (payload.message?.items ?? [])
-      .filter((item) => item.title?.[0] && item.URL)
-      .map((item) => ({
-        paperId: item.DOI ?? item.URL ?? "",
-        title: item.title?.[0] ?? "Publicación sin título",
-        abstract: null,
-        year: item.published?.["date-parts"]?.[0]?.[0] ?? null,
-        venue: item["container-title"]?.[0] ?? "Crossref",
-        authors: (item.author ?? []).map((author) => ({
-          name: [author.given, author.family].filter(Boolean).join(" ")
-        })),
-        citationCount: item["is-referenced-by-count"] ?? 0,
-        url: item.URL ?? "",
-        publicationTypes: item.type ? [item.type] : []
-      }));
-    return rankPapers(papers, query);
-  } catch {
-    return [];
-  }
-}
-
 function rankPapers(papers: SemanticPaper[], query: string) {
   const terms = queryTerms(query);
+  if (terms.length < 2) return [];
   const primaryTerm = terms[0];
   const ranked = papers
     .map((paper) => {
@@ -193,7 +149,8 @@ function rankPapers(papers: SemanticPaper[], query: string) {
       const titleOverlap = terms.filter((term) => title.includes(term)).length;
       const abstractOverlap = terms.filter((term) => abstract.includes(term)).length;
       const primaryMatch = Boolean(primaryTerm && (title.includes(primaryTerm) || abstract.includes(primaryTerm)));
-      const score = titleOverlap * 3 + abstractOverlap;
+      const coverage = terms.length ? (titleOverlap + abstractOverlap) / terms.length : 0;
+      const score = titleOverlap * 4 + abstractOverlap + coverage;
       return { paper, primaryMatch, titleOverlap, abstractOverlap, score };
     })
     .sort((a, b) => b.score - a.score || b.paper.citationCount - a.paper.citationCount);
@@ -202,7 +159,7 @@ function rankPapers(papers: SemanticPaper[], query: string) {
   return ranked
     .filter((entry) =>
       entry.primaryMatch &&
-      (entry.titleOverlap >= 2 || (entry.titleOverlap >= 1 && entry.abstractOverlap >= 2))
+      (entry.titleOverlap >= 2 || (entry.titleOverlap >= 1 && entry.abstractOverlap >= 3) || entry.abstractOverlap >= 5)
     )
     .filter((entry) => {
       const key = normalizeSearchText(entry.paper.title);

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import type { Argument } from "@/data/topics";
+import { ConceptExplorer } from "@/components/concept-explorer";
 import { EvidenceBadge, StudyIcon } from "@/components/evidence";
 import { ScientificResourceActions } from "@/components/scientific-resource-actions";
 import { TweetShareButton } from "@/components/tweet-share-button";
@@ -44,7 +45,12 @@ export function ArgumentAccordion({ argument }: { argument: Argument }) {
             <ListBlock title="Fortalezas" items={argument.strengths} />
             <ListBlock title="Limitaciones" items={argument.limitations} />
             <ListBlock title="Contraargumentos" items={argument.counterarguments} />
-            <ListBlock title="Conceptos relacionados" items={argument.relatedConcepts} />
+            <div>
+              <h4 className="text-sm font-semibold text-ink dark:text-white">Conceptos relacionados</h4>
+              <div className="mt-2">
+                <ConceptExplorer concepts={argument.relatedConcepts} />
+              </div>
+            </div>
             <ListBlock title="Preguntas para seguir pensando" items={argument.questions ?? []} />
           </div>
           <div className="mt-6 space-y-3">

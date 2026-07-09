@@ -30,202 +30,169 @@ const stopWords = new Set([
   "para", "porque", "como", "pero", "desde", "hasta", "entre", "sobre", "esto", "esta",
   "este", "estos", "estas", "todo", "todos", "todas", "algo", "mucho", "poco", "puede",
   "pueden", "tiene", "tienen", "hacer", "hace", "ser", "son", "que", "con", "sin", "por",
-  "del", "las", "los", "una", "uno", "unos", "unas", "más", "menos", "muy", "realmente"
+  "del", "las", "los", "una", "uno", "unos", "unas", "mas", "menos", "muy", "realmente",
+  "crees", "piensas", "explica", "analiza", "dime", "verdad"
 ]);
 
 export function buildTopicAnalysis(topic: Topic, query: string, mode: AnalysisMode): LocalAnalysis {
   const resources = [...topic.support, ...topic.opposition]
     .flatMap((argument) => argument.resources)
     .filter((resource, index, all) => all.findIndex((candidate) => candidate.url === resource.url) === index);
-  const evidence = topic.support[0]?.evidence ?? "Sin evidencia suficiente";
-  const opposition = topic.opposition.map((argument) => ({
-    title: mode === "devil" ? `Objeción fuerte: ${argument.title}` : argument.title,
-    explanation: `${argument.explanation} Una limitación importante es: ${argument.limitations.join(" ")}`,
-    evidence: evidenceLabel(argument.evidence)
-  }));
+  const evidence = strongestEvidence(topic);
 
   return {
     resultKind: "curated",
     claim: query.trim(),
-    summary: mode === "devil"
-      ? `La postura se somete a su versión contraria más sólida. ${topic.summary}`
-      : mode === "tiktok"
-        ? `La afirmación del contenido conecta con una ficha investigada. Conviene separar el mensaje viral de lo que sostienen las fuentes. ${topic.summary}`
-        : topic.summary,
-    confidence: evidence === "Alta" ? 88 : evidence === "Moderada" ? 74 : evidence === "Baja" ? 56 : 35,
+    summary: topicSummary(topic, mode),
+    confidence: confidenceFromEvidence(evidence),
     evidenceQuality: evidenceLabel(evidence),
-    argumentsFor: topic.support.map((argument) => ({
+    argumentsFor: topic.support.slice(0, 3).map((argument) => ({
       title: argument.title,
-      explanation: `${argument.explanation} Una limitación importante es: ${argument.limitations.join(" ")}`,
+      explanation: conciseArgument(argument.explanation, argument.limitations),
       evidence: evidenceLabel(argument.evidence)
     })),
-    argumentsAgainst: opposition,
-    known: topic.known,
-    unknown: topic.unknown,
-    biases: topic.biases.map((name) => ({
+    argumentsAgainst: topic.opposition.slice(0, 3).map((argument) => ({
+      title: mode === "devil" ? `Objecion fuerte: ${argument.title}` : argument.title,
+      explanation: conciseArgument(argument.explanation, argument.limitations),
+      evidence: evidenceLabel(argument.evidence)
+    })),
+    known: unique(topic.known).slice(0, 5),
+    unknown: unique(topic.unknown).slice(0, 5),
+    biases: unique(topic.biases).slice(0, 4).map((name) => ({
       name,
-      explanation: biasExplanation(name, query)
+      explanation: biasExplanation(name, topic.title)
     })),
     questions: modeQuestions(mode, topic.title.toLowerCase(), query),
-    sources: resources.map((resource) => ({
+    sources: resources.slice(0, 8).map((resource) => ({
       title: resource.title,
       publisher: resource.journal,
       year: resource.year,
-      url: resource.url
+      url: resource.url,
+      authors: resource.authors,
+      summary: resource.summary
     }))
   };
 }
 
 export function buildAdaptiveAnalysis(query: string, mode: AnalysisMode): LocalAnalysis {
   const claim = query.trim();
+  const subject = extractSubject(claim);
   const normalized = normalize(claim);
-  const terms = extractTerms(normalized);
-  const subject = terms.length ? terms.slice(0, 3).join(", ") : "la afirmación";
   const causal = /\b(causa|causan|provoca|provocan|produce|destruye|mejora|empeora|aumenta|reduce|hace que)\b/.test(normalized);
   const absolute = /\b(siempre|nunca|todos|todas|nadie|ningun|ninguna|completamente|definitivamente)\b/.test(normalized);
-  const normative = /\b(debe|deberia|deberían|prohibir|obligar|ilegal|permitir)\b/.test(normalized);
-  const predictive = /\b(va a|acabará|futuro|reemplazará|desaparecerá|inevitable)\b/.test(normalized);
-  const commercial = /\b(compra|comprar|vende|curso|suplemento|producto|milagro|dinero)\b/.test(normalized);
-  const emotional = /\b(estafa|terrible|horrible|increible|peligroso|culpa|enemigo|fracaso)\b/.test(normalized);
+  const normative = /\b(debe|deberia|deberian|prohibir|obligar|ilegal|permitir)\b/.test(normalized);
+  const predictive = /\b(va a|futuro|reemplazara|desaparecera|inevitable|acabaran|acabaran)\b/.test(normalized);
   const numerical = /\d|%/.test(claim);
-
   const signals = [
     causal && "causal",
     absolute && "absoluta",
     normative && "normativa",
     predictive && "predictiva",
-    commercial && "comercial",
-    emotional && "emocional",
     numerical && "cuantitativa"
   ].filter(Boolean) as string[];
 
-  const core = signals.length
-    ? `La frase combina una afirmación ${signals.join(", ")} sobre ${subject}.`
-    : `La frase propone una interpretación sobre ${subject}.`;
-
-  const modeSummary = mode === "devil"
-    ? `${core} Para construir el mejor contraargumento hay que buscar excepciones, costes ocultos y una explicación alternativa que encaje con los mismos hechos.`
-    : mode === "tiktok"
-      ? `${core} En contenido breve, la fuerza persuasiva puede venir del montaje, el tono o una anécdota; ninguna de esas señales sustituye evidencia representativa.`
-      : `${core} Todavía no existe una ficha editorial específica, así que el resultado distingue hipótesis, supuestos y pruebas necesarias sin inventar fuentes.`;
-
   return {
+    resultKind: "unresolved",
     claim,
-    summary: modeSummary,
-    confidence: 20,
+    summary: unresolvedSummary(mode, subject, signals),
+    confidence: 0,
     evidenceQuality: "Insuficiente",
-    argumentsFor: [supportingArgument(mode, subject, causal, normative, predictive)],
-    argumentsAgainst: [challengingArgument(mode, subject, causal, absolute, normative, predictive, numerical)],
-    known: knownStatements(mode, subject, signals),
-    unknown: unknownStatements(subject, causal, normative, predictive),
-    biases: selectBiases({ absolute, emotional, commercial, predictive, numerical }, subject),
-    questions: adaptiveQuestions(mode, subject, causal, normative, predictive, numerical),
+    argumentsFor: [],
+    argumentsAgainst: [],
+    known: [
+      `La consulta trata sobre ${subject}.`,
+      signals.length
+        ? `La frase tiene una forma ${signals.join(", ")}. Eso ayuda a buscar evidencia, pero no demuestra la conclusion.`
+        : "La frase necesita una definicion mas concreta antes de contrastarla bien."
+    ],
+    unknown: [
+      "Que poblacion, periodo y definicion exacta deberian evaluarse.",
+      "Que fuentes primarias responden directamente a la afirmacion.",
+      "Si hay evidencia suficiente para hablar de causalidad, magnitud o consenso."
+    ],
+    biases: [],
+    questions: adaptiveQuestions(mode, subject, { causal, normative, predictive, numerical }),
     sources: []
   };
 }
 
-function supportingArgument(mode: AnalysisMode, subject: string, causal: boolean, normative: boolean, predictive: boolean) {
+function topicSummary(topic: Topic, mode: AnalysisMode) {
   if (mode === "devil") {
-    return {
-      title: `La postura original puede estar ignorando una excepción sobre ${subject}`,
-      explanation: `Incluso si la intuición principal fuera razonable, podría dejar fuera grupos, circunstancias o consecuencias donde ocurre lo contrario. El contraargumento más fuerte necesita describir esa excepción y mostrar que no es marginal.`,
-      evidence: "Insuficiente" as const
-    };
+    return `Esta es la objecion mas fuerte disponible dentro de una ficha curada de CONTRASTE. ${topic.summary}`;
   }
   if (mode === "tiktok") {
-    return {
-      title: `El contenido puede partir de una observación reconocible sobre ${subject}`,
-      explanation: "Una experiencia concreta puede señalar una pregunta real y conectar con problemas que la audiencia reconoce. Su valor inicial es formular una hipótesis, no demostrar que sea universal.",
-      evidence: "Insuficiente" as const
-    };
+    return `El contenido se ha conectado con una ficha curada. Conviene separar el gancho viral de lo que permiten sostener las fuentes. ${topic.summary}`;
   }
-  return {
-    title: causal ? `Existe una hipótesis causal comprobable sobre ${subject}` : normative ? `La propuesta puede responder a un problema real relacionado con ${subject}` : predictive ? `La predicción identifica una tendencia posible en ${subject}` : `La idea puede describir una experiencia real sobre ${subject}`,
-    explanation: "La afirmación merece investigación si define qué observa, en quién ocurre y frente a qué alternativa se compara. Casos repetidos pueden justificar una hipótesis, aunque todavía no establezcan su alcance.",
-    evidence: "Insuficiente" as const
-  };
+  return topic.summary;
 }
 
-function challengingArgument(mode: AnalysisMode, subject: string, causal: boolean, absolute: boolean, normative: boolean, predictive: boolean, numerical: boolean) {
-  const issue = absolute
-    ? "Los términos absolutos suelen caer con una sola excepción relevante y ocultan variación entre personas o contextos."
-    : causal
-      ? "Que dos fenómenos aparezcan juntos no demuestra que uno cause el otro; pueden intervenir selección, confusores o causalidad inversa."
-      : normative
-        ? "Pasar de describir un problema a imponer una solución exige comparar derechos, costes, incentivos y alternativas menos restrictivas."
-        : predictive
-          ? "Una tendencia no determina un futuro: adopción, regulación, precios y comportamiento pueden cambiar la trayectoria."
-          : numerical
-            ? "Una cifra sin denominador, periodo, muestra y fuente verificable puede crear precisión aparente."
-            : "La conclusión necesita una definición operativa y comparación con explicaciones alternativas.";
-
-  return {
-    title: mode === "devil" ? `La explicación rival sobre ${subject}` : mode === "tiktok" ? "La forma viral puede exagerar la solidez del mensaje" : `La conclusión sobre ${subject} puede exceder las pruebas`,
-    explanation: `${issue} El argumento contrario debe explicar los mismos hechos con menos supuestos o predecir observaciones distintas.`,
-    evidence: "Insuficiente" as const
-  };
+function conciseArgument(explanation: string, limitations: string[]) {
+  const clean = explanation.replace(/\s+/g, " ").trim();
+  const firstLimitation = limitations.find((item) => item.trim().length > 0);
+  if (!firstLimitation) return clean;
+  if (clean.toLowerCase().includes(firstLimitation.toLowerCase().slice(0, 32))) return clean;
+  return `${clean} Limite principal: ${firstLimitation}`;
 }
 
-function knownStatements(mode: AnalysisMode, subject: string, signals: string[]) {
-  return mode === "tiktok"
-    ? [
-        `El mensaje central trata sobre ${subject}.`,
-        `La frase utiliza un encuadre ${signals.join(", ") || "interpretativo"}.`,
-        "Popularidad, seguridad al hablar y número de visualizaciones no miden calidad de evidencia."
-      ]
-    : [
-        `La afirmación se centra en ${subject}.`,
-        `Su forma puede analizarse como ${signals.join(", ") || "una interpretación general"}.`,
-        "Una experiencia o ejemplo permite abrir una pregunta, pero no generalizar por sí solo."
-      ];
+function strongestEvidence(topic: Topic): EvidenceLevel {
+  return topic.support[0]?.evidence ?? topic.opposition[0]?.evidence ?? "Sin evidencia suficiente";
 }
 
-function unknownStatements(subject: string, causal: boolean, normative: boolean, predictive: boolean) {
-  return [
-    `Qué población, periodo y definición concreta se usan al hablar de ${subject}.`,
-    causal ? "Si existe una relación causal o solo asociación, selección y factores de confusión." : "Qué datos comparativos respaldan la magnitud de la afirmación.",
-    normative ? "Qué efectos secundarios tendría la propuesta y qué alternativas se compararon." : predictive ? "Qué condiciones tendrían que mantenerse para que la predicción se cumpla." : "Qué evidencia contradice la interpretación y cómo se respondió a ella."
-  ];
+function confidenceFromEvidence(evidence: EvidenceLevel) {
+  if (evidence === "Alta") return 88;
+  if (evidence === "Moderada") return 74;
+  if (evidence === "Baja") return 56;
+  return 25;
 }
 
-function selectBiases(flags: { absolute: boolean; emotional: boolean; commercial: boolean; predictive: boolean; numerical: boolean }, subject: string) {
-  const biases = [];
-  if (flags.absolute) biases.push({ name: "Pensamiento absoluto", explanation: `Convierte la variación sobre ${subject} en una regla sin excepciones.` });
-  if (flags.emotional) biases.push({ name: "Razonamiento emocional", explanation: "La intensidad de una reacción puede confundirse con la probabilidad o gravedad real." });
-  if (flags.commercial) biases.push({ name: "Conflicto de interés", explanation: "Quien presenta el problema puede beneficiarse de vender la solución." });
-  if (flags.predictive) biases.push({ name: "Extrapolación", explanation: "Prolonga una tendencia actual como si sus condiciones nunca fueran a cambiar." });
-  if (flags.numerical) biases.push({ name: "Precisión aparente", explanation: "Una cifra concreta parece rigurosa aunque falten fuente, muestra o denominador." });
-  biases.push(
-    { name: "Confirmación", explanation: `Favorece ejemplos compatibles con la postura inicial sobre ${subject}.` },
-    { name: "Disponibilidad", explanation: "Lo más visible o reciente puede parecer más frecuente de lo que es." }
-  );
-  return biases.slice(0, 4);
+function unresolvedSummary(mode: AnalysisMode, subject: string, signals: string[]) {
+  const shape = signals.length ? ` Parece una afirmacion ${signals.join(", ")}.` : "";
+  if (mode === "devil") {
+    return `No puedo construir un contraargumento documentado sobre ${subject} sin una ficha curada o fuentes claramente relacionadas.${shape} Prefiero pedir mas precision antes que rellenar huecos con una plantilla.`;
+  }
+  if (mode === "tiktok") {
+    return `No puedo verificar este contenido con fiabilidad solo con esa frase.${shape} Se necesita identificar la afirmacion comprobable y una fuente primaria.`;
+  }
+  return `No puedo responder con fiabilidad sobre ${subject} con la informacion disponible.${shape} CONTRASTE no va a inventar una conclusion ni citar fuentes que no respondan directamente.`;
 }
 
-function adaptiveQuestions(mode: AnalysisMode, subject: string, causal: boolean, normative: boolean, predictive: boolean, numerical: boolean) {
+function adaptiveQuestions(
+  mode: AnalysisMode,
+  subject: string,
+  flags: { causal: boolean; normative: boolean; predictive: boolean; numerical: boolean }
+) {
   const questions = [
-    `¿Cómo se definiría y mediría exactamente ${subject}?`,
-    causal ? "¿Qué diseño permitiría distinguir causalidad de correlación?" : "¿Qué comparación falta para evaluar esta afirmación?",
-    normative ? "¿Qué alternativa menos restrictiva podría lograr el mismo objetivo?" : predictive ? "¿Qué acontecimiento haría fallar esta predicción?" : "¿Qué evidencia te haría cambiar de opinión?",
-    numerical ? "¿De dónde sale la cifra, cuál es el denominador y qué periodo cubre?" : "¿Existe una explicación alternativa para los mismos casos?"
+    `Como se definiria exactamente ${subject}?`,
+    flags.causal ? "Que evidencia distinguiria causalidad de simple asociacion?" : "Que comparacion concreta permitiria evaluar la afirmacion?",
+    flags.normative ? "Que costes, derechos y alternativas habria que comparar?" : flags.predictive ? "Que hecho futuro haria fallar la prediccion?" : "Que dato te haria cambiar de opinion?",
+    flags.numerical ? "De donde sale la cifra, cual es el denominador y que periodo cubre?" : "Que fuente primaria seria la mas adecuada?"
   ];
-  if (mode === "tiktok") questions.push("¿El contenido enlaza la fuente original o solo cita una captura, titular o experto?");
-  if (mode === "devil") questions.push("¿Cuál es la versión del argumento contrario que aceptarían sus mejores defensores?");
-  return questions;
+  if (mode === "tiktok") questions.push("El contenido enlaza la fuente original o solo usa una captura, titular o anecdota?");
+  if (mode === "devil") questions.push("Cual es la version exacta de la postura que quieres poner a prueba?");
+  return unique(questions);
 }
 
 function modeQuestions(mode: AnalysisMode, topic: string, query: string) {
   const shared = [
-    `¿Qué tendría que ocurrir para cambiar de opinión sobre ${topic}?`,
-    "¿Qué evidencia se acepta en un lado que se rechazaría en el contrario?"
+    `Que tendria que ocurrir para cambiar de opinion sobre ${topic}?`,
+    "Que evidencia se acepta en un lado que se rechazaria en el contrario?"
   ];
-  if (mode === "tiktok") return [...shared, "¿El contenido muestra la fuente completa o solo una interpretación?", "¿Qué información relevante quedó fuera del vídeo?"];
-  if (mode === "devil") return [...shared, `¿Qué parte de “${query.slice(0, 80)}” es más vulnerable a una excepción?`, "¿Puede la posición rival explicar los mismos hechos con menos supuestos?"];
-  return [...shared, "¿La afirmación distingue correlación, causa y experiencia personal?"];
+  if (mode === "tiktok") {
+    return [...shared, "El contenido muestra la fuente completa o solo una interpretacion?", "Que informacion relevante quedo fuera?"];
+  }
+  if (mode === "devil") {
+    return [...shared, `Que parte de "${query.slice(0, 80)}" es mas vulnerable a una excepcion?`, "Puede la posicion rival explicar los mismos hechos con menos supuestos?"];
+  }
+  return [...shared, "La afirmacion distingue correlacion, causa y experiencia personal?"];
 }
 
-function biasExplanation(name: string, query: string) {
-  return `${name} puede influir en cómo seleccionamos ejemplos e interpretamos “${query.slice(0, 90)}”.`;
+function biasExplanation(name: string, topic: string) {
+  return `${name} puede influir en como seleccionamos ejemplos sobre ${topic} y en que pruebas consideramos suficientes.`;
+}
+
+function extractSubject(query: string) {
+  const terms = extractTerms(normalize(query));
+  return terms.length ? terms.slice(0, 4).join(", ") : "la afirmacion";
 }
 
 function extractTerms(normalized: string) {
@@ -233,7 +200,17 @@ function extractTerms(normalized: string) {
 }
 
 function normalize(value: string) {
-  return value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9%áéíóúñ\s]/g, " ").replace(/\s+/g, " ").trim();
+  return value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9%\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function unique<T>(items: T[]) {
+  return Array.from(new Set(items));
 }
 
 function evidenceLabel(evidence: EvidenceLevel): AnalysisEvidence {

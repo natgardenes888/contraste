@@ -8,6 +8,7 @@ function normalize(value: string) {
 export function findTopicMatch(query: string): Topic | undefined {
   const normalizedQuery = normalize(query);
   if (normalizedQuery.length < 3) return undefined;
+  const queryLooksSpecificAndCausal = /\b(cura|curan|controla|controlan|causa|causan|provoca|provocan|elimina|eliminan)\b/.test(normalizedQuery);
 
   const signalScores = feedDictionary.map((signal) => {
     const score = [signal.phrase, ...signal.aliases].map(normalize).reduce((best, alias) => {
@@ -30,12 +31,13 @@ export function findTopicMatch(query: string): Topic | undefined {
       .split(" ")
       .some((word) => word.length >= 7 && queryWords.has(word));
     const overlap = [...queryWords].filter((word) => topicWords.has(word)).length;
+    const lowOverlapSpecificClaim = queryLooksSpecificAndCausal && queryWords.size >= 3 && overlap <= 1;
     const score = normalizedQuery === title
       ? 100
       : title.includes(normalizedQuery) || normalizedQuery.includes(title)
-        ? 80
+        ? (lowOverlapSpecificClaim ? 24 : 80)
         : distinctiveTitleMatch
-          ? 60
+          ? (lowOverlapSpecificClaim ? 24 : 60)
           : overlap * 12;
     return { slug: topic.slug, score };
   });
