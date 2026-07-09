@@ -1,5 +1,6 @@
-import Link from "next/link";
 import { BookOpen, Search } from "lucide-react";
+import Link from "next/link";
+import { BrandLogo } from "@/components/brand-logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { MobileNav } from "@/components/mobile-nav";
 import { DesktopNav } from "@/components/desktop-nav";
@@ -11,9 +12,7 @@ export function SiteHeader() {
         Saltar al contenido
       </a>
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:h-16 sm:px-6 lg:px-8">
-        <Link href="/" className="text-sm font-black tracking-[0.22em] text-ink dark:text-white">
-          CONTRASTE
-        </Link>
+        <BrandLogo />
         <DesktopNav />
         <div className="flex items-center gap-2">
           <MobileNav />

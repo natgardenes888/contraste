@@ -22,7 +22,19 @@ export default function OpenGraphImage() {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ fontSize: 24, fontWeight: 800, letterSpacing: 7 }}>CONTRASTE</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+            <div style={{ display: "flex", width: 58, height: 58, borderRadius: 18, overflow: "hidden", background: "#151412", padding: 8 }}>
+              <div style={{ flex: 1, borderTopLeftRadius: 18, borderBottomLeftRadius: 18, background: "#3657d8" }} />
+              <div style={{ display: "flex", flexDirection: "column", width: 16, background: "#fbfaf7" }}>
+                <div style={{ height: 10 }} />
+                <div style={{ height: 8, background: "#151412" }} />
+                <div style={{ flex: 1 }} />
+                <div style={{ height: 10, background: "#151412" }} />
+              </div>
+              <div style={{ flex: 1, borderTopRightRadius: 18, borderBottomRightRadius: 18, background: "#df755f" }} />
+            </div>
+            <div style={{ fontSize: 24, fontWeight: 800, letterSpacing: 7 }}>CONTRASTE</div>
+          </div>
           <div style={{ display: "flex", gap: 10 }}>
             <div style={{ width: 22, height: 22, borderRadius: 11, background: "#3657d8" }} />
             <div style={{ width: 22, height: 22, borderRadius: 11, background: "#df755f" }} />
