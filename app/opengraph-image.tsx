@@ -23,15 +23,17 @@ export default function OpenGraphImage() {
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 96, height: 64, borderRadius: 12, background: "#ffffff" }}>
-              <svg width="86" height="58" viewBox="0 0 120 80" fill="none">
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 64, height: 64, borderRadius: 16, background: "#12110F" }}>
+              <svg width="54" height="54" viewBox="0 0 64 64" fill="none">
                 <path
-                  d="M12 15h96c-.8 3.8-4.8 6-12.4 6H77.8c-6 0-9.8 2.2-11.1 6.3-.8 2.4-.1 5 2 7.4 1.6 1.8 2.7 3.5 3.2 5 .7 2.4-.2 4.2-2.7 5.3-2.3 1-5.4 1.5-9.2 1.5s-6.9-.5-9.2-1.5c-2.5-1.1-3.4-2.9-2.7-5.3.5-1.5 1.6-3.2 3.2-5 2.1-2.4 2.8-5 2-7.4C52 23.2 48.2 21 42.2 21H24.4C16.8 21 12.8 18.8 12 15Z"
-                  fill="#050505"
+                  d="M13.5 15.5h37c-.9 3.7-3.8 5.7-8.7 6l-6 .4c-3.3.2-5.4 1.6-6.1 4.2-.5 1.9.2 3.7 2.1 5.5 1.6 1.5 2.4 3.1 2.4 4.8 0 2.1-1.2 3.8-3.5 5-1.6.8-2.4 2-2.4 3.5v4.6h9.5c4.2 0 7.2 1.6 9 4.8H17.2c1.8-3.2 4.8-4.8 9-4.8h9.5v-4.6c0-1.5-.8-2.7-2.4-3.5-2.3-1.2-3.5-2.9-3.5-5 0-1.7.8-3.3 2.4-4.8 1.9-1.8 2.6-3.6 2.1-5.5-.7-2.6-2.8-4-6.1-4.2l-6-.4c-4.9-.3-7.8-2.3-8.7-6Z"
+                  fill="#F8F5EE"
                 />
                 <path
-                  d="M52.5 43.4c2.1 1 4.6 1.5 7.5 1.5s5.4-.5 7.5-1.5c-.8 3-2.2 5.7-4.2 8.1-1.5 1.8-2.3 3.8-2.3 6v4.2h24.5c5.1 0 9.1 2 12 6H22.5c2.9-4 6.9-6 12-6H59v-4.2c0-2.2-.8-4.2-2.3-6-2-2.4-3.4-5.1-4.2-8.1Z"
-                  fill="#050505"
+                  d="M18.5 20.5c3.3 3.3 5.1 6.9 5.5 10.8.4 4-1 7.6-4.2 10.7M45.5 20.5c-3.3 3.3-5.1 6.9-5.5 10.8-.4 4 1 7.6 4.2 10.7"
+                  stroke="#F8F5EE"
+                  strokeWidth="2"
+                  strokeLinecap="round"
                 />
               </svg>
             </div>
