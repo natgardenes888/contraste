@@ -23,13 +23,13 @@ export default function HomePage() {
     <>
       <SiteHeader />
       <PageFrame>
-        <section className="flex min-h-[72vh] items-center py-8">
+        <section className="flex min-h-[56vh] items-center py-5 sm:min-h-[72vh] sm:py-8">
           <div className="float-in max-w-4xl">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-ink/10 bg-white/70 px-3 py-1.5 text-sm text-graphite shadow-soft dark:border-white/10 dark:bg-white/[0.06] dark:text-white/70">
               <ShieldCheck className="h-4 w-4 text-coral" />
               Lo que tu algoritmo no te enseña
             </div>
-            <h1 className="max-w-4xl text-5xl font-semibold tracking-tight text-ink dark:text-white sm:text-6xl lg:text-7xl">
+            <h1 className="max-w-4xl text-4xl font-semibold tracking-tight text-ink dark:text-white sm:text-6xl lg:text-7xl">
               ¿Que idea quieres poner a prueba hoy?
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-graphite dark:text-white/70">
@@ -47,7 +47,7 @@ export default function HomePage() {
               </Link>
             </div>
             <div className="mt-4 grid max-w-2xl gap-3 sm:grid-cols-[1.3fr_0.7fr]">
-              <Link href="/tiktok" className="inline-flex h-16 items-center justify-center gap-3 rounded-lg bg-gradient-to-r from-coral via-cobalt to-sage px-5 text-base font-semibold text-white shadow-soft transition hover:scale-[1.01]">
+              <Link href="/tiktok" className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-coral via-cobalt to-sage px-4 text-sm font-semibold text-white shadow-soft transition hover:scale-[1.01] sm:h-16 sm:gap-3 sm:px-5 sm:text-base">
                 <Video className="h-5 w-5" />
                 Analiza este TikTok
               </Link>
@@ -80,10 +80,10 @@ export default function HomePage() {
           </article>
         </section>
 
-        <section id="tendencias" className="py-12">
+        <section id="tendencias" className="py-8 sm:py-12">
           <div className="mb-6">
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-cobalt dark:text-blue-300">Tendencias</p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-ink dark:text-white">Ideas que ya puedes abrir</h2>
+            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-ink dark:text-white sm:text-3xl">Ideas que ya puedes abrir</h2>
           </div>
           <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
             {demoTrends.map(([title, slug]) => (
@@ -97,10 +97,10 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="py-10">
+        <section className="py-8 sm:py-10">
           <div className="mb-6 max-w-2xl">
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-coral dark:text-orange-200">Diccionario del feed</p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-ink dark:text-white">Frases virales traducidas a preguntas mejores</h2>
+            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-ink dark:text-white sm:text-3xl">Frases virales traducidas a preguntas mejores</h2>
           </div>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {feedDictionary.slice(0, 6).map((signal) => (
@@ -122,11 +122,11 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="py-12">
+        <section className="py-8 sm:py-12">
           <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div className="max-w-2xl">
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sage dark:text-emerald-200">Ponlo a prueba</p>
-              <h2 className="mt-2 text-3xl font-semibold tracking-tight text-ink dark:text-white">Mini-retos contra el piloto automatico</h2>
+              <h2 className="mt-2 text-2xl font-semibold tracking-tight text-ink dark:text-white sm:text-3xl">Mini-retos contra el piloto automatico</h2>
             </div>
             <Link href="/analizador" className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-ink px-5 text-sm font-semibold text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-cobalt dark:bg-white dark:text-ink">
               <BrainCircuit className="h-4 w-4" />
@@ -138,7 +138,7 @@ export default function HomePage() {
               <Link
                 key={signal.phrase}
                 href={`/temas/${signal.topicSlug}`}
-                className="group flex min-h-72 flex-col justify-between rounded-lg border border-ink/10 bg-white/80 p-5 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-sage/40 dark:border-white/10 dark:bg-white/[0.04]"
+                className="group flex min-h-56 flex-col justify-between rounded-lg border border-ink/10 bg-white/80 p-4 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-sage/40 dark:border-white/10 dark:bg-white/[0.04] sm:min-h-72 sm:p-5"
               >
                 <div>
                   <div className="flex items-center justify-between gap-4">
@@ -169,7 +169,7 @@ export default function HomePage() {
           <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-coral dark:text-orange-200">Biblioteca</p>
-              <h2 className="mt-2 text-3xl font-semibold tracking-tight text-ink dark:text-white">Mas temas para contrastar</h2>
+              <h2 className="mt-2 text-2xl font-semibold tracking-tight text-ink dark:text-white sm:text-3xl">Mas temas para contrastar</h2>
             </div>
             <Link href="/temas" className="inline-flex items-center gap-2 text-sm font-semibold text-cobalt dark:text-blue-300">
               Ver los {topics.length} temas <ArrowRight className="h-4 w-4" />
@@ -182,7 +182,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section id="categorias" className="py-12">
+        <section id="categorias" className="py-8 sm:py-12">
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-cobalt dark:text-blue-300">Categorias</p>
           <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {categories.map(({ name, icon: Icon }) => (
@@ -204,9 +204,9 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="grid items-center gap-8 border-y border-ink/10 py-12 dark:border-white/10 md:grid-cols-[0.7fr_1.3fr]">
-          <div className="flex h-48 items-center justify-center bg-coral text-white md:h-64">
-            <BookOpen className="h-16 w-16" strokeWidth={1.4} />
+        <section className="grid items-center gap-6 border-y border-ink/10 py-8 dark:border-white/10 sm:gap-8 sm:py-12 md:grid-cols-[0.7fr_1.3fr]">
+          <div className="flex h-28 items-center justify-center bg-coral text-white sm:h-48 md:h-64">
+            <BookOpen className="h-10 w-10 sm:h-16 sm:w-16" strokeWidth={1.4} />
           </div>
           <div>
             <p className="text-sm font-semibold uppercase text-coral dark:text-orange-200">La voz detras del proyecto</p>

@@ -20,7 +20,7 @@ export function ConceptExplorer({ concepts }: { concepts: string[] }) {
               aria-expanded={isSelected}
               aria-controls={definitionId}
               onClick={() => setSelected(isSelected ? null : concept)}
-              className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition ${
+              className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition sm:gap-2 sm:px-4 sm:py-2 sm:text-sm ${
                 isSelected
                   ? "border-cobalt bg-cobalt text-white"
                   : "border-ink/10 bg-white text-graphite hover:border-cobalt/40 hover:text-cobalt dark:border-white/10 dark:bg-white/[0.04] dark:text-white/70"
@@ -34,7 +34,7 @@ export function ConceptExplorer({ concepts }: { concepts: string[] }) {
       </div>
 
       {selected ? (
-        <div id={definitionId} role="region" aria-live="polite" className="mt-4 rounded-lg border-l-4 border-cobalt bg-cobalt/5 p-5 dark:bg-cobalt/10">
+        <div id={definitionId} role="region" aria-live="polite" className="mt-3 rounded-lg border-l-4 border-cobalt bg-cobalt/5 p-4 dark:bg-cobalt/10 sm:mt-4 sm:p-5">
           <h3 className="font-semibold text-ink dark:text-white">{selected}</h3>
           <p className="mt-2 max-w-3xl text-sm leading-7 text-graphite dark:text-white/70">
             {getConceptDefinition(selected)}

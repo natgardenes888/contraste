@@ -10,7 +10,7 @@ export function SiteHeader() {
       <a href="#main-content" className="sr-only z-50 bg-ink px-4 py-3 text-sm font-semibold text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-2">
         Saltar al contenido
       </a>
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:h-16 sm:px-6 lg:px-8">
         <Link href="/" className="text-sm font-black tracking-[0.22em] text-ink dark:text-white">
           CONTRASTE
         </Link>
@@ -37,7 +37,7 @@ export function SiteHeader() {
 
 export function PageFrame({ children }: { children: React.ReactNode }) {
   return (
-    <main id="main-content" tabIndex={-1} className="mx-auto min-h-screen max-w-7xl px-4 pb-20 pt-8 outline-none sm:px-6 sm:pt-10 lg:px-8">
+    <main id="main-content" tabIndex={-1} className="mx-auto min-h-screen max-w-7xl px-4 pb-12 pt-5 outline-none sm:px-6 sm:pb-20 sm:pt-10 lg:px-8">
       {children}
     </main>
   );

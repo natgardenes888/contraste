@@ -17,14 +17,14 @@ export function CompareDemo() {
 
   return (
     <div className="grid gap-6 xl:grid-cols-[minmax(0,0.72fr)_minmax(18rem,0.28fr)]">
-      <section className="rounded-lg border border-ink/10 bg-white/80 p-5 shadow-soft dark:border-white/10 dark:bg-white/[0.04]">
+      <section className="rounded-lg border border-ink/10 bg-white/80 p-4 shadow-soft dark:border-white/10 dark:bg-white/[0.04] sm:p-5">
         <header className="flex items-center gap-3">
           <span className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-cobalt to-coral text-white">
             <ArrowRightLeft className="h-5 w-5" />
           </span>
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.16em] text-coral dark:text-orange-200">Comparador</p>
-            <h1 className="text-3xl font-semibold tracking-tight text-ink dark:text-white">Comparar dos ideas</h1>
+            <h1 className="text-2xl font-semibold tracking-tight text-ink dark:text-white sm:text-3xl">Comparar dos ideas</h1>
           </div>
         </header>
 

@@ -70,14 +70,14 @@ export function MobileNav() {
       </button>
       {open && (
         <>
-          <button type="button" aria-label="Cerrar menú" onClick={() => setOpen(false)} className="fixed inset-0 top-16 z-30 bg-ink/15 backdrop-blur-[2px]" />
-          <div ref={menuRef} id="mobile-navigation" role="dialog" aria-modal="true" aria-label="Menú principal" className="absolute left-0 top-16 z-40 w-full border-b border-ink/10 bg-paper px-4 py-4 shadow-soft dark:border-white/10 dark:bg-[#11110f]">
+          <button type="button" aria-label="Cerrar menú" onClick={() => setOpen(false)} className="fixed inset-0 top-14 z-30 bg-ink/15 backdrop-blur-[2px] sm:top-16" />
+          <div ref={menuRef} id="mobile-navigation" role="dialog" aria-modal="true" aria-label="Menú principal" className="absolute left-0 top-14 z-40 w-full border-b border-ink/10 bg-paper px-4 py-3 shadow-soft dark:border-white/10 dark:bg-[#11110f] sm:top-16 sm:py-4">
             <nav aria-label="Navegación móvil" className="mx-auto grid max-w-7xl gap-1">
               {navigationItems.map((item, index) => {
                 const Icon = icons[index];
                 const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
                 return (
-                  <Link key={item.href} href={item.href} aria-current={active ? "page" : undefined} onClick={() => setOpen(false)} className={`flex min-h-12 items-center gap-3 rounded-md px-3 py-3 text-sm font-medium transition ${active ? "bg-cobalt/10 text-cobalt dark:text-blue-200" : item.accent ? "text-coral hover:bg-coral/5" : "text-ink hover:bg-ink/5 dark:text-white dark:hover:bg-white/5"}`}>
+                  <Link key={item.href} href={item.href} aria-current={active ? "page" : undefined} onClick={() => setOpen(false)} className={`flex min-h-10 items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition sm:min-h-12 sm:py-3 ${active ? "bg-cobalt/10 text-cobalt dark:text-blue-200" : item.accent ? "text-coral hover:bg-coral/5" : "text-ink hover:bg-ink/5 dark:text-white dark:hover:bg-white/5"}`}>
                     <Icon className="h-4 w-4" aria-hidden="true" />
                     {item.label}
                   </Link>

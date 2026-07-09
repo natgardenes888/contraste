@@ -46,7 +46,7 @@ export function TopicCard({
   return (
     <Link
       href={`/temas/${slug}`}
-      className={`group flex min-h-56 flex-col justify-between rounded-lg border border-ink/10 bg-gradient-to-br ${color} p-5 shadow-soft transition duration-300 hover:-translate-y-1 hover:scale-[1.015] hover:border-cobalt/30 dark:border-white/10`}
+      className={`group flex min-h-40 flex-col justify-between rounded-lg border border-ink/10 bg-gradient-to-br ${color} p-4 shadow-soft transition duration-300 hover:-translate-y-1 hover:scale-[1.015] hover:border-cobalt/30 dark:border-white/10 sm:min-h-56 sm:p-5`}
     >
       <div className="flex items-start justify-between gap-4">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-ink/5 px-3 py-1 text-xs font-medium text-graphite dark:bg-white/10 dark:text-white/70">
@@ -56,8 +56,8 @@ export function TopicCard({
         <ArrowUpRight className="h-4 w-4 text-graphite transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 dark:text-white/60" />
       </div>
       <div>
-        <h3 className="text-xl font-semibold tracking-tight text-ink dark:text-white">{title}</h3>
-        <p className="mt-3 text-sm leading-6 text-graphite dark:text-white/65">{status}</p>
+        <h3 className="text-lg font-semibold tracking-tight text-ink dark:text-white sm:text-xl">{title}</h3>
+        <p className="mt-2 line-clamp-3 text-sm leading-6 text-graphite dark:text-white/65 sm:mt-3 sm:line-clamp-none">{status}</p>
         {strongestArgument ? (
           <div className="mt-4 flex flex-wrap items-center gap-2">
             <EvidenceBadge level={strongestArgument.evidence} />

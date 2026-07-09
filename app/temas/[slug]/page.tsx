@@ -49,7 +49,7 @@ export default function TopicPage({ params }: { params: { slug: string } }) {
       <PageFrame>
         <BackLink href="/temas" label="Volver a todos los temas" />
 
-        <section className="aurora-panel grid gap-8 border-y border-ink/10 py-8 dark:border-white/10 lg:grid-cols-[0.74fr_0.26fr]">
+        <section className="aurora-panel grid gap-5 border-y border-ink/10 py-6 dark:border-white/10 sm:gap-8 sm:py-8 lg:grid-cols-[0.74fr_0.26fr]">
           <div>
             <div className="flex flex-wrap items-center gap-3">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-cobalt/10 px-3 py-1 text-xs font-semibold text-cobalt dark:bg-blue-300/10 dark:text-blue-200">
@@ -61,10 +61,10 @@ export default function TopicPage({ params }: { params: { slug: string } }) {
                 Actualizado {topic.updatedAt}
               </span>
             </div>
-            <h1 className="mt-5 text-4xl font-semibold tracking-tight text-ink dark:text-white sm:text-6xl">{topic.title}</h1>
-            <p className="mt-6 max-w-3xl text-lg leading-8 text-graphite dark:text-white/70">{topic.summary}</p>
+            <h1 className="mt-4 text-3xl font-semibold tracking-tight text-ink dark:text-white sm:mt-5 sm:text-6xl">{topic.title}</h1>
+            <p className="mt-4 max-w-3xl text-base leading-7 text-graphite dark:text-white/70 sm:mt-6 sm:text-lg sm:leading-8">{topic.summary}</p>
           </div>
-          <aside className="relative z-10 rounded-lg border border-ink/10 bg-white/80 p-5 shadow-soft dark:border-white/10 dark:bg-black/20">
+          <aside className="relative z-10 rounded-lg border border-ink/10 bg-white/80 p-4 shadow-soft dark:border-white/10 dark:bg-black/20 sm:p-5">
             <p className="text-sm font-semibold text-ink dark:text-white">Estado de la ficha</p>
             <p className="mt-3 text-sm leading-6 text-graphite dark:text-white/65">{topic.status}</p>
             <div className="mt-5 flex flex-wrap gap-2">
@@ -167,8 +167,8 @@ export default function TopicPage({ params }: { params: { slug: string } }) {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="py-8">
-      <h2 className="mb-5 text-2xl font-semibold tracking-tight text-ink dark:text-white">{title}</h2>
+    <section className="py-5 sm:py-8">
+      <h2 className="mb-4 text-xl font-semibold tracking-tight text-ink dark:text-white sm:mb-5 sm:text-2xl">{title}</h2>
       {children}
     </section>
   );

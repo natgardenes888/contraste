@@ -40,24 +40,24 @@ export function AnalysisDemo({ mode, initialText }: { mode: AnalysisMode; initia
   }
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[minmax(18rem,0.34fr)_minmax(24rem,0.46fr)_minmax(14rem,0.20fr)]">
-      <section className="aurora-panel rounded-lg border border-ink/10 bg-white/80 p-5 shadow-soft dark:border-white/10 dark:bg-white/[0.05]">
+    <div className="grid gap-4 sm:gap-6 xl:grid-cols-[minmax(18rem,0.34fr)_minmax(24rem,0.46fr)_minmax(14rem,0.20fr)]">
+      <section className="aurora-panel rounded-lg border border-ink/10 bg-white/80 p-4 shadow-soft dark:border-white/10 dark:bg-white/[0.05] sm:p-5">
         <div className="relative z-10">
-          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-cobalt to-coral text-white">
-            <BrainCircuit className="h-5 w-5" />
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-cobalt to-coral text-white sm:h-11 sm:w-11">
+            <BrainCircuit className="h-4 w-4 sm:h-5 sm:w-5" />
           </div>
-          <h1 className="mt-5 text-4xl font-semibold text-ink dark:text-white">{copy[mode].title}</h1>
-          <p className="mt-4 text-sm leading-7 text-graphite dark:text-white/70">{copy[mode].subtitle}</p>
+          <h1 className="mt-3 text-3xl font-semibold text-ink dark:text-white sm:mt-5 sm:text-4xl">{copy[mode].title}</h1>
+          <p className="mt-3 text-sm leading-6 text-graphite dark:text-white/70 sm:mt-4 sm:leading-7">{copy[mode].subtitle}</p>
           <textarea
             value={text}
             onChange={(event) => setText(event.target.value)}
-            className="mt-6 min-h-40 w-full resize-none rounded-lg border border-ink/10 bg-paper/80 p-4 text-sm leading-6 text-ink outline-none transition focus:border-cobalt dark:border-white/10 dark:bg-black/20 dark:text-white"
+            className="mt-4 min-h-28 w-full resize-none rounded-lg border border-ink/10 bg-paper/80 p-3 text-sm leading-6 text-ink outline-none transition focus:border-cobalt dark:border-white/10 dark:bg-black/20 dark:text-white sm:mt-6 sm:min-h-40 sm:p-4"
             placeholder={copy[mode].placeholder}
           />
           <button
             onClick={analyze}
             disabled={text.trim().length < 8 || isLoading}
-            className="mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-md bg-ink px-5 text-sm font-semibold text-white transition hover:bg-cobalt disabled:cursor-not-allowed disabled:opacity-50 dark:bg-white dark:text-ink"
+            className="mt-3 inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-ink px-4 text-sm font-semibold text-white transition hover:bg-cobalt disabled:cursor-not-allowed disabled:opacity-50 dark:bg-white dark:text-ink sm:mt-4 sm:h-12 sm:px-5"
           >
             {isLoading ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <SendHorizontal className="h-4 w-4" />}
             {isLoading ? "Buscando evidencia..." : copy[mode].button}
@@ -69,8 +69,8 @@ export function AnalysisDemo({ mode, initialText }: { mode: AnalysisMode; initia
         </div>
       </section>
 
-      <section className="rounded-lg border border-ink/10 bg-white/80 p-5 shadow-soft dark:border-white/10 dark:bg-white/[0.04]">
-        <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-ink/10 pb-4 dark:border-white/10">
+      <section className="rounded-lg border border-ink/10 bg-white/80 p-4 shadow-soft dark:border-white/10 dark:bg-white/[0.04] sm:p-5">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-ink/10 pb-3 dark:border-white/10 sm:mb-5 sm:pb-4">
           <p className="text-sm font-semibold text-ink dark:text-white">Informe de contraste</p>
           {analysis ? (
             <span className="inline-flex items-center gap-1.5 rounded-full bg-cobalt/10 px-3 py-1 text-xs font-semibold text-cobalt dark:text-blue-200">
@@ -83,8 +83,8 @@ export function AnalysisDemo({ mode, initialText }: { mode: AnalysisMode; initia
         {analysis ? (
           <AnalysisResult analysis={analysis} />
         ) : (
-          <div className="flex min-h-[28rem] items-center justify-center rounded-lg border border-dashed border-ink/15 bg-paper/50 p-8 text-center dark:border-white/10 dark:bg-black/10">
-            <p className="max-w-sm text-sm leading-7 text-graphite dark:text-white/60">
+          <div className="flex min-h-44 items-center justify-center rounded-lg border border-dashed border-ink/15 bg-paper/50 p-5 text-center dark:border-white/10 dark:bg-black/10 sm:min-h-[28rem] sm:p-8">
+            <p className="max-w-sm text-sm leading-6 text-graphite dark:text-white/60 sm:leading-7">
               Escribe una idea concreta. CONTRASTE distinguirá sus supuestos, pruebas necesarias y mejores objeciones.
             </p>
           </div>

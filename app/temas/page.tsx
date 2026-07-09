@@ -14,15 +14,15 @@ export default function TopicsPage({ searchParams }: { searchParams: { categoria
     <>
       <SiteHeader />
       <PageFrame>
-        <header className="pb-10">
+        <header className="pb-6 sm:pb-10">
           <p className="flex items-center gap-2 text-sm font-semibold uppercase text-cobalt dark:text-blue-300">
             <LibraryBig className="h-4 w-4" />
             Biblioteca de contraste
           </p>
-          <h1 className="mt-5 max-w-4xl text-5xl font-semibold leading-[1.05] text-ink dark:text-white sm:text-7xl">
+          <h1 className="mt-4 max-w-4xl text-4xl font-semibold leading-[1.05] text-ink dark:text-white sm:mt-5 sm:text-7xl">
             Busca una idea. Encuentra el otro lado.
           </h1>
-          <p className="mt-6 max-w-2xl text-base leading-8 text-graphite dark:text-white/70">
+          <p className="mt-4 max-w-2xl text-base leading-7 text-graphite dark:text-white/70 sm:mt-6 sm:leading-8">
             Explora líneas de pensamiento que circulan en redes y examina qué sabemos, qué discutimos y qué sigue abierto.
           </p>
         </header>
