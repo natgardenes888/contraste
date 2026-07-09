@@ -23,15 +23,15 @@ export default function OpenGraphImage() {
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-            <div style={{ display: "flex", width: 58, height: 58, borderRadius: 18, overflow: "hidden", background: "#151412", padding: 8 }}>
-              <div style={{ flex: 1, borderTopLeftRadius: 18, borderBottomLeftRadius: 18, background: "#3657d8" }} />
-              <div style={{ display: "flex", flexDirection: "column", width: 16, background: "#fbfaf7" }}>
-                <div style={{ height: 10 }} />
-                <div style={{ height: 8, background: "#151412" }} />
-                <div style={{ flex: 1 }} />
-                <div style={{ height: 10, background: "#151412" }} />
-              </div>
-              <div style={{ flex: 1, borderTopRightRadius: 18, borderBottomRightRadius: 18, background: "#df755f" }} />
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 58, height: 58, borderRadius: 14, background: "#ffffff" }}>
+              <div
+                style={{
+                  width: 44,
+                  height: 36,
+                  background: "#050505",
+                  clipPath: "polygon(0 0,100% 0,92% 13%,70% 18%,58% 32%,58% 54%,68% 66%,58% 74%,66% 86%,86% 90%,92% 100%,8% 100%,14% 90%,34% 86%,42% 74%,32% 66%,42% 54%,42% 32%,30% 18%,8% 13%)"
+                }}
+              />
             </div>
             <div style={{ fontSize: 24, fontWeight: 800, letterSpacing: 7 }}>CONTRASTE</div>
           </div>
